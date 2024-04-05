@@ -2789,7 +2789,7 @@ bite()
 void
 gethungry()
 {
-    if (u.uinvulnerable)
+    if (edj_wizard || u.uinvulnerable)
         return; /* you don't feel hungrier */
 
     /* being polymorphed into a creature which doesn't eat prevents
@@ -2847,7 +2847,10 @@ void
 morehungry(num)
 int num;
 {
-    u.uhunger -= num;
+    if (edj_wizard)
+        u.uhunger = 1000;
+    else
+        u.uhunger -= num;
     newuhs(TRUE);
 }
 

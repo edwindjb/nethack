@@ -764,13 +764,13 @@ struct monst *mtmp, *mtarg;
         if (!mtarg->mpeaceful)
             score += 10;
         /* Is the monster passive? Don't waste energy on it, if so */
-        if (mtarg->data->mattk[0].aatyp == AT_NONE)
+        if (!edj_wizard && (mtarg->data->mattk[0].aatyp == AT_NONE))
             score -= 1000;
         /* Even weak pets with breath attacks shouldn't take on very
            low-level monsters. Wasting breath on lichens is ridiculous. */
-        if ((mtarg->m_lev < 2 && mtmp->m_lev > 5)
+        if (!edj_wizard && ((mtarg->m_lev < 2 && mtmp->m_lev > 5)
             || (mtmp->m_lev > 12 && mtarg->m_lev < mtmp->m_lev - 9
-                && u.ulevel > 8 && mtarg->m_lev < u.ulevel - 7))
+                && u.ulevel > 8 && mtarg->m_lev < u.ulevel - 7)))
             score -= 25;
         /* for strength purposes, a vampshifter in weak form (vampire bat,
            fog cloud, maybe wolf) will attack as if in vampire form;

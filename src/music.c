@@ -216,18 +216,21 @@ charm_monsters(distance)
 int distance;
 {
     struct monst *mtmp, *mtmp2;
-
+    
     if (u.uswallow) {
         if (!resist(u.ustuck, TOOL_CLASS, 0, NOTELL))
             (void) tamedog(u.ustuck, (struct obj *) 0);
     } else {
         for (mtmp = fmon; mtmp; mtmp = mtmp2) {
+            if (edj_wizard) {
+                You("%s ...", mtmp->data->mname);
+            }
             mtmp2 = mtmp->nmon;
             if (DEADMONSTER(mtmp))
                 continue;
 
-            if (distu(mtmp->mx, mtmp->my) <= distance) {
-                if (!resist(mtmp, TOOL_CLASS, 0, NOTELL))
+            if (edj_wizard || (distu(mtmp->mx, mtmp->my) <= distance)) {
+                if (edj_wizard || !resist(mtmp, TOOL_CLASS, 0, NOTELL))
                     (void) tamedog(mtmp, (struct obj *) 0);
             }
         }

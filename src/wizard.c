@@ -67,7 +67,7 @@ amulet()
 #endif
     if ((((amu = uamul) != 0 && amu->otyp == AMULET_OF_YENDOR)
          || ((amu = uwep) != 0 && amu->otyp == AMULET_OF_YENDOR))
-        && !rn2(15)) {
+        && (edj_wizard || !rn2(15))) {
         for (ttmp = ftrap; ttmp; ttmp = ttmp->ntrap) {
             if (ttmp->ttyp == MAGIC_PORTAL) {
                 int du = distu(ttmp->tx, ttmp->ty);
@@ -83,7 +83,7 @@ amulet()
         }
     }
 
-    if (!context.no_of_wizards)
+    if (!edj_wizard && !context.no_of_wizards)
         return;
     /* find Wizard, and wake him if necessary */
     for (mtmp = fmon; mtmp; mtmp = mtmp->nmon) {

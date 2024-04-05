@@ -741,7 +741,9 @@ Amulet_on()
     case AMULET_VERSUS_POISON:
     case AMULET_OF_REFLECTION:
     case AMULET_OF_MAGICAL_BREATHING:
+#ifndef edj_wizard
     case FAKE_AMULET_OF_YENDOR:
+#endif
         break;
     case AMULET_OF_UNCHANGING:
         if (Slimed)
@@ -787,6 +789,9 @@ Amulet_on()
         if (newnap < oldnap || oldnap == 0L)
             HSleepy = (HSleepy & ~TIMEOUT) | newnap;
     } break;
+#ifdef edj_wizard
+    case FAKE_AMULET_OF_YENDOR:
+#endif
     case AMULET_OF_YENDOR:
         break;
     }
@@ -1554,7 +1559,7 @@ struct obj *otmp;
         return 0;
     }
     /* Curses, like chickens, come home to roost. */
-    if ((otmp == uwep) ? welded(otmp) : (int) otmp->cursed) {
+    if (!edj_wizard && (otmp == uwep) ? welded(otmp) : (int) otmp->cursed) {
         boolean use_plural = (is_boots(otmp) || is_gloves(otmp)
                               || otmp->otyp == LENSES || otmp->quan > 1L);
 

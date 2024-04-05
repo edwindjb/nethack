@@ -892,6 +892,11 @@ boolean atme;
     struct obj *pseudo;
     coord cc;
 
+    if (edj_wizard) {
+        spl_book[spell].sp_know++;
+        spl_book[spell].sp_lev = 127;
+    }
+    
     /*
      * Reject attempting to cast while stunned or with no free hands.
      * Already done in getspell() to stop casting before choosing
@@ -901,7 +906,7 @@ boolean atme;
      * (There's no duplication of messages; when the rejection takes
      * place in getspell(), we don't get called.)
      */
-    if (rejectcasting()) {
+    if (!edj_wizard && rejectcasting()) {
         return 0; /* no time elapses */
     }
 
@@ -909,7 +914,7 @@ boolean atme;
      * Spell casting no longer affects knowledge of the spell. A
      * decrement of spell knowledge is done every turn.
      */
-    if (spellknow(spell) <= 0) {
+    if (!edj_wizard && (spellknow(spell) <= 0)) {
         Your("knowledge of this spell is twisted.");
         pline("It invokes nightmarish images in your mind...");
         spell_backfire(spell);
@@ -928,7 +933,9 @@ boolean atme;
      *  and strength requirements; it any of these change, update it too.
      */
     energy = (spellev(spell) * 5); /* 5 <= energy <= 35 */
-
+    if (edj_wizard)
+        u.uen = energy * 10;
+    
     if (u.uhunger <= 10 && spellid(spell) != SPE_DETECT_FOOD) {
         You("are too hungry to cast that spell.");
         return 0;
@@ -945,7 +952,7 @@ boolean atme;
        in and no turn will be consumed; however, when it does kick in,
        the attempt may fail due to lack of energy after the draining, in
        which case a turn will be used up in addition to the energy loss */
-    if (u.uhave.amulet && u.uen >= energy) {
+    if (!edj_wizard && u.uhave.amulet && u.uen >= energy) {
         You_feel("the amulet draining your energy away.");
         /* this used to be 'energy += rnd(2 * energy)' (without 'res'),
            so if amulet-induced cost was more than u.uen, nothing
@@ -1015,7 +1022,7 @@ boolean atme;
     }
 
     chance = percent_success(spell);
-    if (confused || (rnd(100) > chance)) {
+    if (!edj_wizard && (confused || (rnd(100) > chance))) {
         You("fail to cast the spell correctly.");
         u.uen -= energy / 2;
         context.botl = 1;

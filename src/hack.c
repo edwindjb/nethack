@@ -1401,7 +1401,7 @@ domove_core()
         u.uy = y = u.ustuck->my;
         mtmp = u.ustuck;
     } else {
-        if (Is_airlevel(&u.uz) && rn2(4) && !Levitation && !Flying) {
+        if (!edj_wizard && Is_airlevel(&u.uz) && rn2(4) && !Levitation && !Flying) {
             switch (rn2(3)) {
             case 0:
                 You("tumble in place.");
@@ -2991,7 +2991,7 @@ register const char *knam;
 boolean k_format;
 {
     if (Upolyd) {
-        u.mh -= n;
+        u.mh -= edj_wizard? 0: n;
         if (u.mhmax < u.mh)
             u.mhmax = u.mh;
         context.botl = 1;
@@ -3002,7 +3002,7 @@ boolean k_format;
         return;
     }
 
-    u.uhp -= n;
+    u.uhp -= edj_wizard? 0: n;
     if (u.uhp > u.uhpmax)
         u.uhpmax = u.uhp; /* perhaps n was negative */
     else
@@ -3092,7 +3092,7 @@ inv_weight()
         otmp = otmp->nobj;
     }
     wc = weight_cap();
-    return (wt - wc);
+    return edj_wizard? -1000: (wt - wc);
 }
 
 /*
@@ -3131,7 +3131,7 @@ boolean
 check_capacity(str)
 const char *str;
 {
-    if (near_capacity() >= EXT_ENCUMBER) {
+    if (!edj_wizard && (near_capacity() >= EXT_ENCUMBER)) {
         if (str)
             pline1(str);
         else

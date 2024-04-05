@@ -1,3 +1,17 @@
+Nethack Hacked, by edj
+Can anybody actually win this freakin' game?  My gosh!  Rogue was hard enough!  These developers are insane!
+
+Enjoy using wizard commands without becoming a wizard (debug mode).  I even had to make it so I didn't lose hitpoints most of the time
+because this game is insanely difficult once you conjure up the Amulet  of Yendor (yes, you can do that now and it won't be fake).  I don't have 10 years to study the nuances of the game and hope I'm lucky as heck besides.
+
+Why do I like this game?  I was an original player of Rogue, the Dungeons of Doom, as a student at UC Santa Cruz.  I couldn't beat
+the game back then either, but I spent hours trying.  We used to try to cheat by copying / restoring save games, but then they
+addressed that hack by 'holding onto the inode as long a possible' and writing the specific location of the disk that the save was
+made to.  When you tried you restore from that copy, they could see it didn't come of the exact same spot on the disk!
+Also, I met Glenn Wichman - we were both students at UCSC in the early 80's.  So it is great fun to be hit by Wichman's Ghost.
+
+=== Enjoy Nethack Hacked ===
+
          NetHack 3.6.7 -- General information February 2023
 
 NetHack 3.6 is an enhancement to the dungeon exploration game NetHack,

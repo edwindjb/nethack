@@ -868,15 +868,15 @@ register struct monst *mtmp;
 register struct obj *obj;
 {
     /* The Wiz, Medusa and the quest nemeses aren't even made peaceful. */
-    if (mtmp->iswiz || mtmp->data == &mons[PM_MEDUSA]
-        || (mtmp->data->mflags3 & M3_WANTSARTI))
+    if (!edj_wizard && (mtmp->iswiz || mtmp->data == &mons[PM_MEDUSA]
+        || (mtmp->data->mflags3 & M3_WANTSARTI)))
         return FALSE;
-
+    
     /* worst case, at least it'll be peaceful. */
     mtmp->mpeaceful = 1;
     set_malign(mtmp);
-    if (flags.moonphase == FULL_MOON && night() && rn2(6) && obj
-        && mtmp->data->mlet == S_DOG)
+    if (!edj_wizard && (flags.moonphase == FULL_MOON && night() && rn2(6) && obj
+        && mtmp->data->mlet == S_DOG))
         return FALSE;
 
     /* If we cannot tame it, at least it's no longer afraid. */
@@ -884,7 +884,7 @@ register struct obj *obj;
     mtmp->mfleetim = 0;
 
     /* make grabber let go now, whether it becomes tame or not */
-    if (mtmp == u.ustuck) {
+    if (!u.ustuck && (mtmp == u.ustuck)) {
         if (u.uswallow)
             expels(mtmp, mtmp->data, TRUE);
         else if (!(Upolyd && sticks(youmonst.data)))
@@ -899,6 +899,7 @@ register struct obj *obj;
             && ((tasty = dogfood(mtmp, obj)) == DOGFOOD
                 || (tasty <= ACCFOOD
                     && EDOG(mtmp)->hungrytime <= monstermoves))) {
+
             /* pet will "catch" and eat this thrown food */
             if (canseemon(mtmp)) {
                 boolean big_corpse =
@@ -916,7 +917,7 @@ register struct obj *obj;
                food and also implies that the object has been deleted */
             return TRUE;
         } else
-            return FALSE;
+            return edj_wizard? TRUE: FALSE;
     }
 
     if (mtmp->mtame || !mtmp->mcanmove
@@ -925,10 +926,10 @@ register struct obj *obj;
         || is_covetous(mtmp->data) || is_human(mtmp->data)
         || (is_demon(mtmp->data) && !is_demon(youmonst.data))
         || (obj && dogfood(mtmp, obj) >= MANFOOD))
-        return FALSE;
+        return edj_wizard? TRUE: FALSE;
 
     if (mtmp->m_id == quest_status.leader_m_id)
-        return FALSE;
+        return edj_wizard? TRUE: FALSE;
 
     /* add the pet extension */
     newedog(mtmp);

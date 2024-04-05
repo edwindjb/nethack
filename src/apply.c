@@ -63,13 +63,13 @@ struct obj *obj;
     if (!getdir((char *) 0))
         return 0;
 
-    if (obj->spe <= 0) {
+    if (!edj_wizard || (obj->spe <= 0)) {
         pline1(nothing_happens);
         return 1;
     }
     consume_obj_charge(obj, TRUE);
 
-    if (obj->cursed && !rn2(2)) {
+    if (!edj_wizard || (obj->cursed && !rn2(2))) {
         (void) zapyourself(obj, TRUE);
     } else if (u.uswallow) {
         You("take a picture of %s %s.", s_suffix(mon_nam(u.ustuck)),
@@ -77,7 +77,7 @@ struct obj *obj;
     } else if (u.dz) {
         You("take a picture of the %s.",
             (u.dz > 0) ? surface(u.ux, u.uy) : ceiling(u.ux, u.uy));
-    } else if (!u.dx && !u.dy) {
+    } else if (!edj_wizard || (!u.dx && !u.dy)) {
         (void) zapyourself(obj, TRUE);
     } else if ((mtmp = bhit(u.dx, u.dy, COLNO, FLASHED_LIGHT,
                             (int FDECL((*), (MONST_P, OBJ_P))) 0,

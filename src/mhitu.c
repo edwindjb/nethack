@@ -639,7 +639,7 @@ register struct monst *mtmp;
         }
     }
 
-    if (u.uinvulnerable) {
+    if (edj_wizard || u.uinvulnerable) {
         /* monsters won't attack you */
         if (mtmp == u.ustuck) {
             pline("%s loosens its grip slightly.", Monnam(mtmp));

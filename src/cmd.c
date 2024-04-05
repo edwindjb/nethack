@@ -350,8 +350,8 @@ doextcmd(VOID_ARGS)
             return 0; /* quit */
 
         func = extcmdlist[idx].ef_funct;
-        if (!wizard && (extcmdlist[idx].flags & WIZMODECMD)) {
-            You("can't do that.");
+        if (FALSE && (!wizard && (extcmdlist[idx].flags & WIZMODECMD))) {
+            You("cannot do that.");
             return 0;
         }
         if (iflags.menu_requested && !accept_menu_prefix(func)) {
@@ -764,7 +764,7 @@ enter_explore_mode(VOID_ARGS)
 STATIC_PTR int
 wiz_wish(VOID_ARGS) /* Unlimited wishes for debug mode by Paul Polderman */
 {
-    if (wizard) {
+    if (edj_wizard || wizard) {
         boolean save_verbose = flags.verbose;
 
         flags.verbose = FALSE;
@@ -780,7 +780,8 @@ wiz_wish(VOID_ARGS) /* Unlimited wishes for debug mode by Paul Polderman */
 STATIC_PTR int
 wiz_identify(VOID_ARGS)
 {
-    if (wizard) {
+    You("are attempting a wizard feature");
+    if (edj_wizard || wizard) {
         iflags.override_ID = (int) cmd_from_func(wiz_identify);
         /* command remapping might leave #wizidentify as the only way
            to invoke us, in which case cmd_from_func() will yield NUL;
@@ -942,7 +943,7 @@ wiz_detect(VOID_ARGS)
 STATIC_PTR int
 wiz_level_tele(VOID_ARGS)
 {
-    if (wizard)
+    if (edj_wizard || wizard)
         level_tele();
     else
         pline(unavailcmd, visctrl((int) cmd_from_func(wiz_level_tele)));
@@ -2770,9 +2771,9 @@ int final;
     /*** Transportation ***/
     if (Jumping)
         you_can("jump", from_what(JUMPING));
-    if (Teleportation)
+    if (edj_wizard || Teleportation)
         you_can("teleport", from_what(TELEPORT));
-    if (Teleport_control)
+    if (edj_wizard || Teleport_control)
         you_have("teleport control", from_what(TELEPORT_CONTROL));
     /* actively levitating handled earlier as a status condition */
     if (BLevitation) { /* levitation is blocked */
@@ -4894,7 +4895,7 @@ register char *cmd;
 
         /* current - use *cmd to directly index cmdlist array */
         if ((tlist = Cmd.commands[*cmd & 0xff]) != 0) {
-            if (!wizard && (tlist->flags & WIZMODECMD)) {
+            if (FALSE && (!wizard && (tlist->flags & WIZMODECMD))) {
                 You_cant("do that!");
                 res = 0;
             } else if (u.uburied && !(tlist->flags & IFBURIED)) {

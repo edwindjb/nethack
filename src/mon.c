@@ -3394,6 +3394,7 @@ STATIC_OVL boolean
 isspecmon(mon)
 struct monst *mon;
 {
+    return !edj_wizard;
     return (mon->isshk || mon->ispriest || mon->isgd
             || mon->m_id == quest_status.leader_m_id);
 }
@@ -3530,7 +3531,7 @@ struct monst *mon;
     }
 
     /* for debugging: allow control of polymorphed monster */
-    if (wizard && iflags.mon_polycontrol) {
+    if (edj_wizard || (wizard && iflags.mon_polycontrol)) {
         char pprompt[BUFSZ], parttwo[QBUFSZ], buf[BUFSZ];
         int monclass, len;
 
@@ -3551,7 +3552,7 @@ struct monst *mon;
         Strcat(pprompt, parttwo);
 
         buf[0] = '\0'; /* clear buffer for EDIT_GETLIN */
-#define TRYLIMIT 5
+#define TRYLIMIT edj_wizard? 1: 5
         tryct = TRYLIMIT;
         do {
             if (tryct == TRYLIMIT - 1) { /* first retry */
@@ -3592,7 +3593,7 @@ struct monst *mon;
 
         if (!tryct)
             pline1(thats_enough_tries);
-        if (is_vampshifter(mon) && !validvamp(mon, &mndx, monclass))
+        if (edj_wizard || (is_vampshifter(mon) && !validvamp(mon, &mndx, monclass)))
             mndx = pickvampshape(mon); /* don't resort to arbitrary */
     }
 

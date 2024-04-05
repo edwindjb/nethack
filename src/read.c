@@ -933,7 +933,12 @@ struct obj *sobj;
 {
     int was_tame = mtmp->mtame;
     unsigned was_peaceful = mtmp->mpeaceful;
-
+    
+    if (edj_wizard) {
+        (void) tamedog(mtmp, (struct obj *) 0);
+        return 0;
+    }
+    
     if (sobj->cursed) {
         setmangry(mtmp, FALSE);
         if (was_peaceful && !mtmp->mpeaceful)
@@ -1406,7 +1411,7 @@ struct obj *sobj; /* scroll, or fake spellbook object for scroll-like spell */
             candidates = 1;
             results = vis_results = maybe_tame(u.ustuck, sobj);
         } else {
-            int i, j, bd = confused ? 5 : 1;
+            int i, j, bd = confused ? (edj_wizard? 1: 5) : 1;
             struct monst *mtmp;
 
             /* note: maybe_tame() can return either positive or
@@ -1563,7 +1568,7 @@ struct obj *sobj; /* scroll, or fake spellbook object for scroll-like spell */
         known = TRUE;
         /*FALLTHRU*/
     case SPE_MAGIC_MAPPING:
-        if (level.flags.nommap) {
+        if (!edj_wizard && level.flags.nommap) {
             Your("%s spins as %s blocks the spell!", body_part(HEAD),
                  something);
             make_confused(HConfusion + rnd(30), FALSE);

@@ -942,7 +942,7 @@ genericptr_t p2 UNUSED;
     damage = reg->arg.a_int;
 
     /* If it was a thick cloud, it dissipates a little first */
-    if (damage >= 5) {
+    if (!edj_wizard && (damage >= 5)) {
         damage /= 2; /* It dissipates, let's do less damage */
         reg->arg = zeroany;
         reg->arg.a_int = damage;
@@ -969,14 +969,14 @@ genericptr_t p2;
     reg = (NhRegion *) p1;
     dam = reg->arg.a_int;
     if (p2 == (genericptr_t) 0) { /* This means *YOU* Bozo! */
-        if (u.uinvulnerable || nonliving(youmonst.data) || Breathless
+        if (edj_wizard || u.uinvulnerable || nonliving(youmonst.data) || Breathless
             || Underwater)
             return FALSE;
         if (!Blind) {
             Your("%s sting.", makeplural(body_part(EYE)));
             make_blinded(1L, FALSE);
         }
-        if (!Poison_resistance) {
+        if (!edj_wizard && !Poison_resistance) {
             pline("%s is burning your %s!", Something,
                   makeplural(body_part(LUNG)));
             You("cough and spit blood!");

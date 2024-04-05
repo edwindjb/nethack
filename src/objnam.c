@@ -3388,7 +3388,7 @@ struct obj *no_wish;
         || !BSTRCMPI(bp, p - 7, "zorkmid")
         || !strcmpi(bp, "gold") || !strcmpi(bp, "money")
         || !strcmpi(bp, "coin") || *bp == GOLD_SYM) {
-        if (cnt > 5000 && !wizard)
+        if (cnt > 5000 && (!wizard || !edj_wizard))
             cnt = 5000;
         else if (cnt < 1)
             cnt = 1;
@@ -3401,7 +3401,7 @@ struct obj *no_wish;
 
     /* check for single character object class code ("/" for wand, &c) */
     if (strlen(bp) == 1 && (i = def_char_to_objclass(*bp)) < MAXOCLASSES
-        && i > ILLOBJ_CLASS && (i != VENOM_CLASS || wizard)) {
+        && i > ILLOBJ_CLASS && (i != VENOM_CLASS || wizard || edj_wizard)) {
         oclass = i;
         goto any;
     }
@@ -3475,7 +3475,7 @@ struct obj *no_wish;
      * " object", but " trap" is suggested--to either the trap
      * name or the object name.
      */
-    if (wizard && (!strncmpi(bp, "bear", 4) || !strncmpi(bp, "land", 4))) {
+    if ((edj_wizard || wizard) && (!strncmpi(bp, "bear", 4) || !strncmpi(bp, "land", 4))) {
         boolean beartrap = (lowc(*bp) == 'b');
         char *zp = bp + 4; /* skip "bear"/"land" */
 
@@ -3688,7 +3688,7 @@ struct obj *no_wish;
      * Disallow such topology tweaks for WIZKIT startup wishes.
      */
  wiztrap:
-    if (wizard && !program_state.wizkit_wishing) {
+    if ((edj_wizard || wizard) && !program_state.wizkit_wishing) {
         struct rm *lev;
         boolean madeterrain = FALSE;
         int trap, x = u.ux, y = u.uy;
@@ -3823,22 +3823,22 @@ struct obj *no_wish;
         oclass = objects[typ].oc_class;
 
     /* handle some objects that are only allowed in wizard mode */
-    if (typ && !wizard) {
+    if (typ && (!edj_wizard || !wizard)) {
         switch (typ) {
         case AMULET_OF_YENDOR:
-            typ = FAKE_AMULET_OF_YENDOR;
+                typ = edj_wizard? AMULET_OF_YENDOR: FAKE_AMULET_OF_YENDOR;
             break;
         case CANDELABRUM_OF_INVOCATION:
-            typ = rnd_class(TALLOW_CANDLE, WAX_CANDLE);
+                typ = edj_wizard? CANDELABRUM_OF_INVOCATION: rnd_class(TALLOW_CANDLE, WAX_CANDLE);
             break;
         case BELL_OF_OPENING:
-            typ = BELL;
+                typ = edj_wizard? BELL_OF_OPENING: BELL;
             break;
         case SPE_BOOK_OF_THE_DEAD:
-            typ = SPE_BLANK_PAPER;
+                typ = edj_wizard? SPE_BOOK_OF_THE_DEAD: SPE_BLANK_PAPER;
             break;
         case MAGIC_LAMP:
-            typ = OIL_LAMP;
+                typ = edj_wizard? MAGIC_LAMP: OIL_LAMP;
             break;
         default:
             /* catch any other non-wishable objects (venom) */
@@ -3863,17 +3863,17 @@ struct obj *no_wish;
 
     /* if player specified a reasonable count, maybe honor it */
     if (cnt > 0 && objects[typ].oc_merge
-        && (wizard || cnt < rnd(6) || (cnt <= 7 && Is_candle(otmp))
+        && (edj_wizard || wizard || cnt < rnd(6) || (cnt <= 7 && Is_candle(otmp))
             || (cnt <= 20 && ((oclass == WEAPON_CLASS && is_ammo(otmp))
                               || typ == ROCK || is_missile(otmp)))))
-        otmp->quan = (long) cnt;
+        otmp->quan = edj_wizard? 10L: (long) cnt;
 
     if (oclass == VENOM_CLASS)
         otmp->spe = 1;
 
     if (spesgn == 0) {
         spe = otmp->spe;
-    } else if (wizard) {
+    } else if (edj_wizard || wizard) {
         ; /* no alteration to spe */
     } else if (oclass == ARMOR_CLASS || oclass == WEAPON_CLASS
                || is_weptool(otmp)
@@ -3931,7 +3931,7 @@ struct obj *no_wish;
         break;
 #endif
     case WAN_WISHING:
-        if (!wizard) {
+        if (!edj_wizard || !wizard) {
             otmp->spe = (rn2(10) ? -1 : 0);
             break;
         }
@@ -3998,12 +3998,16 @@ struct obj *no_wish;
         curse(otmp);
     } else if (uncursed) {
         otmp->blessed = 0;
-        otmp->cursed = (Luck < 0 && !wizard);
+        otmp->cursed = (Luck < 0 && (!edj_wizard || !wizard));
     } else if (blessed) {
-        otmp->blessed = (Luck >= 0 || wizard);
-        otmp->cursed = (Luck < 0 && !wizard);
+        otmp->blessed = (Luck >= 0 || edj_wizard || wizard);
+        otmp->cursed = (Luck < 0 && (!edj_wizard || !wizard));
     } else if (spesgn < 0) {
         curse(otmp);
+    }
+    if (edj_wizard) {
+        otmp->blessed = 1;
+        otmp->cursed = 0;
     }
 
     /* set eroded and erodeproof */
@@ -4019,13 +4023,16 @@ struct obj *no_wish;
          * so don't prevent player from wishing for such a combination.
          */
         if (erodeproof && (is_damageable(otmp) || otmp->otyp == CRYSKNIFE))
-            otmp->oerodeproof = (Luck >= 0 || wizard);
+            otmp->oerodeproof = (Luck >= 0 || edj_wizard || wizard);
+    }
+    if (edj_wizard) {
+        otmp->oerodeproof = 1;
     }
 
     /* set otmp->recharged */
     if (oclass == WAND_CLASS) {
         /* prevent wishing abuse */
-        if (otmp->otyp == WAN_WISHING && !wizard)
+        if (otmp->otyp == WAN_WISHING && (!edj_wizard || !wizard))
             rechrg = 1;
         otmp->recharged = (unsigned) rechrg;
     }
@@ -4073,7 +4080,7 @@ struct obj *no_wish;
         otmp->odiluted = 1;
 
     /* set tin variety */
-    if (otmp->otyp == TIN && tvariety >= 0 && (rn2(4) || wizard))
+    if (otmp->otyp == TIN && tvariety >= 0 && (rn2(4) || edj_wizard || wizard))
         set_tin_variety(otmp, tvariety);
 
     if (name) {
@@ -4105,7 +4112,7 @@ struct obj *no_wish;
     /* more wishing abuse: don't allow wishing for certain artifacts */
     /* and make them pay; charge them for the wish anyway! */
     if ((is_quest_artifact(otmp)
-         || (otmp->oartifact && rn2(nartifact_exist()) > 1)) && !wizard) {
+         || (otmp->oartifact && rn2(nartifact_exist()) > 1)) && (!edj_wizard || !wizard)) {
         artifact_exists(otmp, safe_oname(otmp), FALSE);
         obfree(otmp, (struct obj *) 0);
         otmp = (struct obj *) &zeroobj;

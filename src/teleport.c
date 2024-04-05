@@ -491,7 +491,7 @@ struct obj *scroll;
     boolean result = FALSE; /* don't learn scroll */
 
     /* Disable teleportation in stronghold && Vlad's Tower */
-    if (level.flags.noteleport) {
+    if (!edj_wizard && level.flags.noteleport) {
         if (!wizard) {
             pline("A mysterious force prevents you from teleporting!");
             return TRUE;
@@ -565,7 +565,7 @@ dotelecmd()
 #define REMOVESPELL 4
 
     /* normal mode; ignore 'm' prefix if it was given */
-    if (!wizard)
+    if (!edj_wizard && !wizard)
         return dotele(FALSE);
 
     added = hidden = NOOP_SPELL;
@@ -789,12 +789,12 @@ level_tele()
 
     if (iflags.debug_fuzzer)
         goto random_levtport;
-    if ((u.uhave.amulet || In_endgame(&u.uz) || In_sokoban(&u.uz))
-        && !wizard) {
+    if (!edj_wizard && ((u.uhave.amulet || In_endgame(&u.uz) || In_sokoban(&u.uz))
+        && !wizard)) {
         You_feel("very disoriented for a moment.");
         return;
     }
-    if ((Teleport_control && !Stunned) || wizard) {
+    if ((Teleport_control && !Stunned) || wizard || edj_wizard) {
         char qbuf[BUFSZ];
         int trycnt = 0;
 
@@ -1293,7 +1293,7 @@ boolean
 tele_restrict(mon)
 struct monst *mon;
 {
-    if (level.flags.noteleport) {
+    if (!edj_wizard && level.flags.noteleport) {
         if (canseemon(mon))
             pline("A mysterious force prevents %s from teleporting!",
                   mon_nam(mon));

@@ -515,7 +515,7 @@ int spellnum;
         break;
     }
 
-    if (dmg)
+    if (!edj_wizard && dmg)
         mdamageu(mtmp, dmg);
 }
 
@@ -727,7 +727,7 @@ int spellnum;
         break;
     }
 
-    if (dmg)
+    if (!edj_wizard && dmg)
         mdamageu(mtmp, dmg);
 }
 

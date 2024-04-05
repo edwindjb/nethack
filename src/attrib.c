@@ -340,7 +340,10 @@ void
 change_luck(n)
 register schar n;
 {
-    u.uluck += n;
+    if (edj_wizard)
+        u.uluck = LUCKMAX;
+    else
+        u.uluck += n;
     if (u.uluck < 0 && u.uluck < LUCKMIN)
         u.uluck = LUCKMIN;
     if (u.uluck > 0 && u.uluck > LUCKMAX)

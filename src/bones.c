@@ -178,7 +178,7 @@ boolean restore;
                 otmp->record_achieve_special = NON_PM;
             } else if (otmp->otyp == AMULET_OF_YENDOR) {
                 /* no longer the real Amulet */
-                otmp->otyp = FAKE_AMULET_OF_YENDOR;
+                otmp->otyp = edj_wizard? AMULET_OF_YENDOR: FAKE_AMULET_OF_YENDOR;
                 curse(otmp);
             } else if (otmp->otyp == CANDELABRUM_OF_INVOCATION) {
                 if (otmp->lamplit)

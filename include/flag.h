@@ -27,6 +27,7 @@ struct flag {
     boolean dark_room; /* show shadows in lit rooms */
     boolean debug;     /* in debugging mode */
 #define wizard flags.debug
+#define edj_wizard !flags.debug
     boolean end_own; /* list all own scores */
     boolean explore; /* in exploration mode */
 #define discover flags.explore

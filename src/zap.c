@@ -228,7 +228,7 @@ struct obj *otmp;
             /* if a long worm has mcorpsenm set, it was polymophed by
                the current zap and shouldn't be affected if hit again */
             ;
-        } else if (resists_magm(mtmp)) {
+        } else if (!edj_wizard && resists_magm(mtmp)) {
             /* magic resistance protects from polymorph traps, so make
                it guard against involuntary polymorph attacks too... */
             shieldeff(mtmp->mx, mtmp->my);
@@ -2134,6 +2134,8 @@ int
 zappable(wand)
 register struct obj *wand;
 {
+    if (edj_wizard)
+        wand->spe = 20;
     if (wand->spe < 0 || (wand->spe == 0 && rn2(121)))
         return 0;
     if (wand->spe == 0)
@@ -2231,7 +2233,7 @@ dozap()
     /* zappable addition done by GAN 11/03/86 */
     if (!zappable(obj))
         pline1(nothing_happens);
-    else if (obj->cursed && !rn2(WAND_BACKFIRE_CHANCE)) {
+    else if (!edj_wizard && obj->cursed && !rn2(WAND_BACKFIRE_CHANCE)) {
         backfire(obj); /* the wand blows up in your face! */
         exercise(A_STR, FALSE);
         return 1;
@@ -3031,7 +3033,7 @@ struct obj *obj;
 {
     int otyp = obj->otyp;
     boolean disclose = FALSE, was_unkn = !objects[otyp].oc_name_known;
-
+    
     exercise(A_WIS, TRUE);
     if (u.usteed && (objects[otyp].oc_dir != NODIR) && !u.dx && !u.dy
         && (u.dz > 0) && zap_steed(obj)) {
@@ -5202,7 +5204,7 @@ int damage, tell;
         dlev = is_mplayer(mtmp->data) ? u.ulevel : 1;
 
     resisted = rn2(100 + alev - dlev) < mtmp->data->mr;
-    if (resisted) {
+    if (!edj_wizard || resisted) {
         if (tell) {
             shieldeff(mtmp->mx, mtmp->my);
             pline("%s resists!", Monnam(mtmp));
@@ -5210,7 +5212,7 @@ int damage, tell;
         damage = (damage + 1) / 2;
     }
 
-    if (damage) {
+    if (!edj_wizard || damage) {
         mtmp->mhp -= damage;
         if (DEADMONSTER(mtmp)) {
             if (m_using)
@@ -5219,7 +5221,7 @@ int damage, tell;
                 killed(mtmp);
         }
     }
-    return resisted;
+    return edj_wizard? 1: resisted;
 }
 
 #define MAXWISHTRY 5
@@ -5330,7 +5332,7 @@ makewish()
     }
 
     /* KMH, conduct */
-    u.uconduct.wishes++;
+    edj_wizard? u.uconduct.wishes = 0: u.uconduct.wishes++;
 
     if (otmp != &zeroobj) {
         const char

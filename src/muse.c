@@ -679,7 +679,7 @@ struct monst *mtmp;
         mzapwand(mtmp, otmp, TRUE);
         how = WAN_TELEPORTATION;
  mon_tele:
-        if (tele_restrict(mtmp)) { /* mysterious force... */
+        if (!edj_wizard && tele_restrict(mtmp)) { /* mysterious force... */
             if (vismon && how)     /* mentions 'teleport' */
                 makeknown(how);
             /* monster learns that teleportation isn't useful here */
@@ -702,7 +702,7 @@ struct monst *mtmp;
         m_using = TRUE;
         mbhit(mtmp, rn1(8, 6), mbhitm, bhito, otmp);
         /* monster learns that teleportation isn't useful here */
-        if (level.flags.noteleport)
+        if (!edj_wizard && level.flags.noteleport)
             mtmp->mtrapseen |= (1 << (TELEP_TRAP - 1));
         m_using = FALSE;
         return 2;

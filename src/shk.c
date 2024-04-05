@@ -4569,6 +4569,8 @@ boolean altusage;
     char buf[BUFSZ];
     long tmp;
 
+    if (edj_wizard)
+        return;
     if (!otmp->unpaid || !*u.ushops
         || (otmp->spe <= 0 && objects[otmp->otyp].oc_charged))
         return;

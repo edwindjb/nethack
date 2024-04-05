@@ -1090,9 +1090,9 @@ consume_obj_charge(obj, maybe_unpaid)
 struct obj *obj;
 boolean maybe_unpaid; /* false if caller handles shop billing */
 {
-    if (maybe_unpaid)
+    if (!edj_wizard && maybe_unpaid)
         check_unpaid(obj);
-    obj->spe -= 1;
+    obj->spe -= edj_wizard? 0: 1;
     if (obj->known)
         update_inventory();
 }

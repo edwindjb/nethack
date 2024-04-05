@@ -97,7 +97,7 @@ register boolean rockit;
     register xchar i;
     register boolean waslit = rm_waslit();
 
-    if (rockit)
+    if (!edj_wizard && rockit)
         pline("Crash!  The ceiling collapses around you!");
     else
         pline("A mysterious force %s cave around you!",
@@ -148,6 +148,11 @@ xchar x, y;
 
     if (!otmp)
         return DIGTYP_UNDIGGABLE;
+    
+    if (edj_wizard) {
+        return DIGTYP_ROCK;
+    }
+    
     ispick = is_pick(otmp);
     if (!ispick && !is_axe(otmp))
         return DIGTYP_UNDIGGABLE;
@@ -246,6 +251,13 @@ dig(VOID_ARGS)
     const char *verb = (!uwep || is_pick(uwep)) ? "dig into" : "chop through";
 
     lev = &levl[dpx][dpy];
+    
+    if (edj_wizard) {
+        lev->typ = CORR;
+        lev->flags = 0;
+        return 1;
+    }
+    
     /* perhaps a nymph stole your pick-axe while you were busy digging */
     /* or perhaps you teleported away */
     if (u.uswallow || !uwep || (!ispick && !is_axe(uwep))
@@ -1429,7 +1441,7 @@ zap_dig()
                               ceiling(u.ux, u.uy));
                 You("loosen a rock from the %s.", ceiling(u.ux, u.uy));
                 pline("It falls on your %s!", body_part(HEAD));
-                dmg = rnd((uarmh && is_metallic(uarmh)) ? 2 : 6);
+                dmg = edj_wizard? 0: rnd((uarmh && is_metallic(uarmh)) ? 2 : 6);
                 losehp(Maybe_Half_Phys(dmg), "falling rock", KILLED_BY_AN);
                 otmp = mksobj_at(ROCK, u.ux, u.uy, FALSE, FALSE);
                 if (otmp) {
@@ -1447,7 +1459,7 @@ zap_dig()
 
     /* normal case: digging across the level */
     shopdoor = shopwall = FALSE;
-    maze_dig = level.flags.is_maze_lev && !Is_earthlevel(&u.uz);
+    maze_dig = edj_wizard || (level.flags.is_maze_lev && !Is_earthlevel(&u.uz));
     zx = u.ux + u.dx;
     zy = u.uy + u.dy;
     if (u.utrap && u.utraptype == TT_PIT
@@ -1459,7 +1471,7 @@ zap_dig()
             /* diridx is valid if < 8 */
         }
     }
-    digdepth = rn1(18, 8);
+    digdepth = edj_wizard? 10: rn1(18, 8);
     tmp_at(DISP_BEAM, cmap_to_glyph(S_digbeam));
     while (--digdepth >= 0) {
         if (!isok(zx, zy))
@@ -1518,9 +1530,9 @@ zap_dig()
             if (maze_dig)
                 break;
         } else if (maze_dig) {
-            if (IS_WALL(room->typ)) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
-                    if (*in_rooms(zx, zy, SHOPBASE)) {
+            if (edj_wizard || IS_WALL(room->typ)) {
+                if (edj_wizard || (!(room->wall_info & W_NONDIGGABLE))) {
+                    if (!edj_wizard && (*in_rooms(zx, zy, SHOPBASE))) {
                         add_damage(zx, zy, SHOP_WALL_COST);
                         shopwall = TRUE;
                     }
@@ -1530,14 +1542,14 @@ zap_dig()
                     pline_The("wall glows then fades.");
                 break;
             } else if (IS_TREE(room->typ)) { /* check trees before stone */
-                if (!(room->wall_info & W_NONDIGGABLE)) {
+                if (edj_wizard || (!(room->wall_info & W_NONDIGGABLE))) {
                     room->typ = ROOM, room->flags = 0;
                     unblock_point(zx, zy); /* vision */
                 } else if (!Blind)
                     pline_The("tree shudders but is unharmed.");
                 break;
             } else if (room->typ == STONE || room->typ == SCORR) {
-                if (!(room->wall_info & W_NONDIGGABLE)) {
+                if (edj_wizard || (!(room->wall_info & W_NONDIGGABLE))) {
                     room->typ = CORR, room->flags = 0;
                     unblock_point(zx, zy); /* vision */
                 } else if (!Blind)
@@ -1545,7 +1557,7 @@ zap_dig()
                 break;
             }
         } else if (IS_ROCK(room->typ)) {
-            if (!may_dig(zx, zy))
+            if (!edj_wizard && (!may_dig(zx, zy)))
                 break;
             if (IS_WALL(room->typ) || room->typ == SDOOR) {
                 if (*in_rooms(zx, zy, SHOPBASE)) {
