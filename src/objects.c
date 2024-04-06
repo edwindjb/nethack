@@ -338,7 +338,7 @@ BOW("crossbow", None,          1, 45, 50, 40, 0, WOOD, P_CROSSBOW, HI_WOOD),
 /* helmets */
 #ifndef edj_wizard
     HELM("elven leather helm", "edj leather hat",
-         0, 1, INVULNERABLE, 99, 0, 0, 99, 9, 1, LEATHER, HI_LEATHER),
+         0, 1, INVULNERABLE, 6, 0, 0, 99, 9, 1, LEATHER, HI_LEATHER),
 #else
 HELM("elven leather helm", "leather hat",
      0, 0,           0,  6, 1,  3,  8,  9, 0, LEATHER, HI_LEATHER),
