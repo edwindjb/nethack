@@ -146,7 +146,7 @@ register boolean special;
             get_mplname(mtmp, nam);
             mtmp = christen_monst(mtmp, nam);
             /* that's why they are "stuck" in the endgame :-) */
-            (void) mongets(mtmp, FAKE_AMULET_OF_YENDOR);
+            (void) mongets(mtmp, edj_wizard? AMULET_OF_YENDOR: AMULET_OF_YENDOR);
         }
         mtmp->mpeaceful = 0;
         set_malign(mtmp); /* peaceful may have changed again */

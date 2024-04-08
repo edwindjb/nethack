@@ -492,7 +492,7 @@ unsigned cxn_flags; /* bitmask of CXN_xxx values */
     case AMULET_CLASS:
         if (!dknown)
             Strcpy(buf, "amulet");
-        else if (typ == AMULET_OF_YENDOR || typ == FAKE_AMULET_OF_YENDOR)
+        else if (typ == AMULET_OF_YENDOR || typ == AMULET_OF_YENDOR)
             /* each must be identified individually */
             Strcpy(buf, known ? actualn : dn);
         else if (nn)
@@ -833,7 +833,7 @@ struct obj *obj;
 
     if (!obj->dknown && !iflags.override_ID)
         return FALSE;
-    else if (obj->otyp == FAKE_AMULET_OF_YENDOR && !known)
+    else if (obj->otyp == edj_wizard? AMULET_OF_YENDOR: AMULET_OF_YENDOR && !known)
         return TRUE; /* lie */
     else
         return (boolean) (objects[obj->otyp].oc_unique
@@ -1039,7 +1039,7 @@ unsigned doname_flags;
 #ifdef MAIL
                      && obj->otyp != SCR_MAIL
 #endif
-                     && obj->otyp != FAKE_AMULET_OF_YENDOR
+                     && obj->otyp != AMULET_OF_YENDOR
                      && obj->otyp != AMULET_OF_YENDOR
                      && !Role_if(PM_PRIEST)))
             Strcat(prefix, "uncursed ");
@@ -1964,8 +1964,11 @@ struct obj *obj;
     /* prefix with "the" if a unique item, or a fake one imitating same,
        has been formatted with its actual name (we let typename() handle
        any `known' and `dknown' checking necessary) */
-    if (otyp == FAKE_AMULET_OF_YENDOR)
+    if (otyp == AMULET_OF_YENDOR) {
+        if (edj_wizard)
+            obj->otyp = AMULET_OF_YENDOR;
         otyp = AMULET_OF_YENDOR;
+    }
     if (objects[otyp].oc_unique
         && !strcmp(simpleoname, OBJ_NAME(objects[otyp])))
         return the(simpleoname);
@@ -3826,7 +3829,7 @@ struct obj *no_wish;
     if (typ && (!edj_wizard || !wizard)) {
         switch (typ) {
         case AMULET_OF_YENDOR:
-                typ = edj_wizard? AMULET_OF_YENDOR: FAKE_AMULET_OF_YENDOR;
+                typ = edj_wizard? AMULET_OF_YENDOR: AMULET_OF_YENDOR;
             break;
         case CANDELABRUM_OF_INVOCATION:
                 typ = edj_wizard? CANDELABRUM_OF_INVOCATION: rnd_class(TALLOW_CANDLE, WAX_CANDLE);

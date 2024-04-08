@@ -5310,46 +5310,48 @@ makewish()
         buf[0] = '\0'; /* for EDIT_GETLIN */
         goto retry;
     }
-    /*
-     *  Note: if they wished for and got a non-object successfully,
-     *  otmp == &zeroobj.  That includes gold, or an artifact that
-     *  has been denied.  Wishing for "nothing" requires a separate
-     *  value to remain distinct.
-     */
-    otmp = readobjnam(buf, &nothing);
-    if (!otmp) {
-        pline("Nothing fitting that description exists in the game.");
-        if (++tries < MAXWISHTRY)
-            goto retry;
-        pline1(thats_enough_tries);
-        otmp = readobjnam((char *) 0, (struct obj *) 0);
-        if (!otmp)
-            return; /* for safety; should never happen */
-    } else if (otmp == &nothing) {
-        /* explicitly wished for "nothing", presumably attempting
-           to retain wishless conduct */
-        return;
-    }
-
-    /* KMH, conduct */
-    edj_wizard? u.uconduct.wishes = 0: u.uconduct.wishes++;
-
-    if (otmp != &zeroobj) {
-        const char
+    for (int count = 0; count < 10; ++count) {
+        /*
+         *  Note: if they wished for and got a non-object successfully,
+         *  otmp == &zeroobj.  That includes gold, or an artifact that
+         *  has been denied.  Wishing for "nothing" requires a separate
+         *  value to remain distinct.
+         */
+        otmp = readobjnam(buf, &nothing);
+        if (!otmp) {
+            pline("Nothing fitting that description exists in the game.");
+            if (++tries < MAXWISHTRY)
+                goto retry;
+            pline1(thats_enough_tries);
+            otmp = readobjnam((char *) 0, (struct obj *) 0);
+            if (!otmp)
+                return; /* for safety; should never happen */
+        } else if (otmp == &nothing) {
+            /* explicitly wished for "nothing", presumably attempting
+             to retain wishless conduct */
+            return;
+        }
+        
+        /* KMH, conduct */
+        edj_wizard? u.uconduct.wishes = 0: u.uconduct.wishes++;
+        
+        if (otmp != &zeroobj) {
+            const char
             *verb = ((Is_airlevel(&u.uz) || u.uinwater) ? "slip" : "drop"),
             *oops_msg = (u.uswallow
                          ? "Oops!  %s out of your reach!"
                          : (Is_airlevel(&u.uz) || Is_waterlevel(&u.uz)
                             || levl[u.ux][u.uy].typ < IRONBARS
                             || levl[u.ux][u.uy].typ >= ICE)
-                            ? "Oops!  %s away from you!"
-                            : "Oops!  %s to the floor!");
-
-        /* The(aobjnam()) is safe since otmp is unidentified -dlc */
-        (void) hold_another_object(otmp, oops_msg,
-                                   The(aobjnam(otmp, verb)),
-                                   (const char *) 0);
-        u.ublesscnt += rn1(100, 50); /* the gods take notice */
+                         ? "Oops!  %s away from you!"
+                         : "Oops!  %s to the floor!");
+            
+            /* The(aobjnam()) is safe since otmp is unidentified -dlc */
+            (void) hold_another_object(otmp, oops_msg,
+                                       The(aobjnam(otmp, verb)),
+                                       (const char *) 0);
+            u.ublesscnt += rn1(100, 50); /* the gods take notice */
+        }
     }
 }
 

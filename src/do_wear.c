@@ -789,9 +789,9 @@ Amulet_on()
         if (newnap < oldnap || oldnap == 0L)
             HSleepy = (HSleepy & ~TIMEOUT) | newnap;
     } break;
-#ifdef edj_wizard
-    case FAKE_AMULET_OF_YENDOR:
-#endif
+//#ifdef edj_wizard
+//    case AMULET_OF_YENDOR:
+//#endif
     case AMULET_OF_YENDOR:
         break;
     }
@@ -813,7 +813,7 @@ Amulet_off()
     case AMULET_OF_REFLECTION:
     case AMULET_OF_CHANGE:
     case AMULET_OF_UNCHANGING:
-    case FAKE_AMULET_OF_YENDOR:
+    case AMULET_OF_YENDOR:
         break;
     case AMULET_OF_MAGICAL_BREATHING:
         if (Underwater) {
@@ -845,8 +845,6 @@ Amulet_off()
         if (!ESleepy && !(HSleepy & ~TIMEOUT))
             HSleepy &= ~TIMEOUT; /* clear timeout bits */
         return;
-    case AMULET_OF_YENDOR:
-        break;
     }
     setworn((struct obj *) 0, W_AMUL);
     return;

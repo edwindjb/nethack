@@ -1533,7 +1533,7 @@ register const char *let, *word;
              || (!strcmp(word, "eat") && !is_edible(otmp))
              || (!strcmp(word, "sacrifice")
                  && (otyp != CORPSE && otyp != AMULET_OF_YENDOR
-                     && otyp != FAKE_AMULET_OF_YENDOR))
+                     && (!edj_wizard && otyp != AMULET_OF_YENDOR)))
              || (!strcmp(word, "write with")
                  && (otmp->oclass == TOOL_CLASS
                      && otyp != MAGIC_MARKER && otyp != TOWEL))
@@ -1559,7 +1559,7 @@ register const char *let, *word;
              || (!strcmp(word, "invoke")
                  && !otmp->oartifact
                  && !objects[otyp].oc_unique
-                 && (otyp != FAKE_AMULET_OF_YENDOR || otmp->known)
+                 && ((!edj_wizard && otyp != AMULET_OF_YENDOR) || otmp->known)
                  && otyp != CRYSTAL_BALL /* synonym for apply */
                  /* note: presenting the possibility of invoking non-artifact
                     mirrors and/or lamps is simply a cruel deception... */

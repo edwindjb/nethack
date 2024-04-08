@@ -1466,9 +1466,9 @@ int how;
     if (u.uhave.amulet) {
         Strcat(killer.name, " (with the Amulet)");
     } else if (how == ESCAPED) {
-        if (Is_astralevel(&u.uz)) /* offered Amulet to wrong deity */
+        if (!edj_wizard && Is_astralevel(&u.uz)) /* offered Amulet to wrong deity */
             Strcat(killer.name, " (in celestial disgrace)");
-        else if (carrying(FAKE_AMULET_OF_YENDOR))
+        else if (!edj_wizard && carrying(AMULET_OF_YENDOR))
             Strcat(killer.name, " (with a fake Amulet)");
         /* don't bother counting to see whether it should be plural */
     }

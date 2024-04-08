@@ -176,9 +176,9 @@ boolean restore;
                 /* "special prize" in this game becomes ordinary object
                    if loaded into another game */
                 otmp->record_achieve_special = NON_PM;
-            } else if (otmp->otyp == AMULET_OF_YENDOR) {
+            } else if (!edj_wizard && (otmp->otyp == AMULET_OF_YENDOR)) {
                 /* no longer the real Amulet */
-                otmp->otyp = edj_wizard? AMULET_OF_YENDOR: FAKE_AMULET_OF_YENDOR;
+                otmp->otyp = AMULET_OF_YENDOR;
                 curse(otmp);
             } else if (otmp->otyp == CANDELABRUM_OF_INVOCATION) {
                 if (otmp->lamplit)

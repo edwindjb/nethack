@@ -549,10 +549,10 @@ struct monst *mtmp;
     }
 
     if (!otmp) {
-        /* if we didn't find any quest arifact, find another valuable item */
+        /* if we didn't find any quest artifact, find another valuable item */
         if (u.uhave.amulet) {
             real = AMULET_OF_YENDOR;
-            fake = FAKE_AMULET_OF_YENDOR;
+            fake = AMULET_OF_YENDOR;
         } else if (u.uhave.bell) {
             real = BELL_OF_OPENING;
             fake = BELL;

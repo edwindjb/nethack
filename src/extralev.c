@@ -359,7 +359,7 @@ makerogueghost()
             curse(ghostobj);
     }
     if (rn2(2)) {
-        ghostobj = mksobj_at(FAKE_AMULET_OF_YENDOR, x, y, TRUE, FALSE);
+        ghostobj = mksobj_at(edj_wizard? AMULET_OF_YENDOR: AMULET_OF_YENDOR, x, y, TRUE, FALSE);
         ghostobj->known = TRUE;
     }
 }

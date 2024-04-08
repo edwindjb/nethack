@@ -1496,7 +1496,7 @@ dosacrifice()
         }
     } /* corpse */
 
-    if (otmp->otyp == AMULET_OF_YENDOR) {
+    if ((otmp->otyp == AMULET_OF_YENDOR) || (edj_wizard && (otmp->otyp == AMULET_OF_YENDOR))) {
         if (!highaltar) {
  too_soon:
             if (altaralign == A_NONE && Inhell)
@@ -1567,7 +1567,7 @@ dosacrifice()
         }
     } /* real Amulet */
 
-    if (otmp->otyp == FAKE_AMULET_OF_YENDOR) {
+    if (!edj_wizard && otmp->otyp == AMULET_OF_YENDOR) {
         if (!highaltar && !otmp->known)
             goto too_soon;
         You_hear("a nearby thunderclap.");
